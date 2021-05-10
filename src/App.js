@@ -46,8 +46,17 @@ function App() {
   }
 
   const getAll = async () => {
+    // create a connection to firebase/firestore/boards collection;
     const boardsRef = firebase.firestore().collection('boards');
+    // cast a general get() from the collection instance to retreive
+    // all of the documents in a collection
     const snapshot = await boardsRef.get();
+    // this retrieves a snapshot of the entire collection
+    // snapshot has a number of methods
+      // docChanges == all the changes to the document since the last fetch
+      // docs returns an array of all the docs in the QuerySnapshot
+      // snapshot.
+      
     snapshot.forEach(doc => {
       console.log(doc.id, '=>', doc.data());
     })
