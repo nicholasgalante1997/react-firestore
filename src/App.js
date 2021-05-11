@@ -11,6 +11,7 @@ function App() {
     // getSingleBoard();
     // getByTitle();
     getAll();
+    // addOne();
   }, [])
 
   // Get a single document from firebase/firestore
@@ -55,11 +56,23 @@ function App() {
     // snapshot has a number of methods
       // docChanges == all the changes to the document since the last fetch
       // docs returns an array of all the docs in the QuerySnapshot
-      // snapshot.
-      
+      // query, and also size are other methods
     snapshot.forEach(doc => {
       console.log(doc.id, '=>', doc.data());
     })
+  }
+
+  const addOne = async () => {
+    const board = {
+      author: 'John Gardner',
+      description: 'A story about an accident',
+      title: 'Grendel',
+    };
+    // create a firestore connection, ref the collection, add data
+    // using .add() will autogenerate an ID, if you do not want to 
+    // autogenerate an ID, you an use .set({...});
+    const res = await firebase.firestore().collection('boards').add(board);
+    console.log("Added document with " + res.id);
   }
 
   return (

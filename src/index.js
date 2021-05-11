@@ -8,10 +8,6 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
-import Edit from './components/edit';
-import Create from './components/create';
-import Show from './components/show';
-
 ReactDOM.render(
   <React.StrictMode>
     <Router>
