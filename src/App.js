@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import firebase from './firebase';
@@ -10,9 +10,14 @@ function App() {
   useEffect(() => {
     // getSingleBoard();
     // getByTitle();
+    // createWithId();
     getAll();
     // addOne();
+    // updateOne();
+    // nestedUpdate();
   }, [])
+
+  useEffect(() => {console.log(boards)}, [boards]);
 
   // Get a single document from firebase/firestore
   const getOne = async () => {
@@ -57,9 +62,13 @@ function App() {
       // docChanges == all the changes to the document since the last fetch
       // docs returns an array of all the docs in the QuerySnapshot
       // query, and also size are other methods
+    const transfer = [];
     snapshot.forEach(doc => {
       console.log(doc.id, '=>', doc.data());
+      transfer.push(doc.data());
     })
+
+    setBoards(transfer);
   }
 
   const addOne = async () => {
@@ -75,21 +84,53 @@ function App() {
     console.log("Added document with " + res.id);
   }
 
+  const updateOne = async () => {
+    // create a working reference of the document you want to update within the collection
+    const boardRef = firebase.firestore().collection('boards').doc('SfaqWJ2JrmT5AfVpPoF7');
+    // non-nested attribute of a document 
+    const updatedRes = await boardRef.update({
+      favorite: true
+    });
+  }
+
+  const nestedUpdate = async () => {
+    const collectionRef = firebase.firestore().collection('boards');
+    const snapshot = await collectionRef.get();
+    let id = Math.floor(Math.random() * 101544);
+    snapshot.forEach(doc => {
+      (async () => {
+        const boardRef = collectionRef.doc(doc.id);
+        await boardRef.update({
+          'uploaded.serial': id
+        })
+      })()
+      ++id;
+    });
+    console.log('Complete');
+  }
+
+  const createWithId = async () => {
+    const data = {
+      author: 'Jonathan Swift',
+      description: 'A young man\'s travels',
+      favorite: false,
+      title: "Gulliver's Travels",
+      uploaded: {
+        serial: Math.floor(Math.random() * 101544)
+      }
+    };
+    const doc = firebase.firestore().collection('boards').doc('GULLIVERS_TRAVELS');
+    await doc.set(data);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {boards.length > 0 ? 
+          boards.map(board => <p>{board.title}</p>) : 
+          null 
+        }
       </header>
     </div>
   );
